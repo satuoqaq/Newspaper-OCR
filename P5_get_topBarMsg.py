@@ -83,7 +83,7 @@ def get_topbar_data(baseRoot, specific_pages=None):
 
         page_infos[img_name] = {'page_number': page_number,
                                 'class_info': class_info}
-
+    page_infos = recheck_page_number(page_infos)
     page_infos = recheck_page_infos(page_infos)
 
     json_page_msg = os.path.join(baseRoot, 'json/page_msg.json')
@@ -126,6 +126,39 @@ def recheck_page_infos(page_infos):
     return new_infos
 
 
+def recheck_page_number(page_infos):
+    """
+    重新对info dict进行整理，检查并订正错误的page_number项
+    遍历每一页，若当前页的前后页page_number间隔1，则当前页的page_number为两者之间
+    !!使用前提是文件命名顺序正确!!
+    :param page_infos:
+    :return:
+    """
+    img_names = list(page_infos.keys())
+    for idx, img_name in enumerate(img_names):
+        page_number = page_infos[img_name]['page_number']
+        if page_number != -1:
+            continue
+        img_num = int(img_name[:-4])
+        try:
+            l_img_num = int(img_names[idx - 1][:-4])
+            r_img_num = int(img_names[idx + 1][:-4])
+            l_info = page_infos[img_names[idx - 1]]['class_info']
+            r_info = page_infos[img_names[idx + 1]]['class_info']
+            l_page_number = page_infos[img_names[idx - 1]]['page_number']
+            r_page_number = page_infos[img_names[idx + 1]]['page_number']
+        except IndexError:
+            continue
+        if not (l_img_num + 1 == img_num == r_img_num - 1):
+            continue
+        if not (l_page_number + 2 == r_page_number):
+            continue
+        if l_info == r_info:
+            page_infos[img_name]['page_number'] = l_page_number + 1
+            page_infos[img_name]['class_info'] = l_info
+    return page_infos
+
+
 def check_page_data(ori_img):
     """
     分析传入图片并得到页码和批次信息
@@ -138,7 +171,6 @@ def check_page_data(ori_img):
         page_number, class_info = get_default_topbar_data(ori_img)
     else:
         page_number, class_info = get_title_topbar_data(ori_img)
-
 
     return page_number, class_info
 
