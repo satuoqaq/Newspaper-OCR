@@ -9,7 +9,8 @@ import numpy as np
 
 kernel = np.ones((5, 5), np.uint8)
 
-ocr = PaddleOCR(use_angle_cls=False, lang="ch", use_gpu=False)
+ocr = PaddleOCR(use_angle_cls=False, lang="ch", use_gpu=True)
+# ocr = ocr_model
 
 
 def get_right_value(ysum, lpos):
@@ -76,7 +77,7 @@ def split_new_id(ans):
 
 def maj_id_rec(img):
     img_new = get_new_id_img(img)
-    # plt.imshow(img_new,cmap='gray')
+    # plt.imshow(img_new, cmap='gray')
     # plt.show()
     ans = ocr.ocr(img_new, det=False, cls=False, rec=True)
     return split_new_id(ans)

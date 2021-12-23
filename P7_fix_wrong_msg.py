@@ -18,7 +18,7 @@ def fix_wrong_msg(baseRoot):
     with open(os.path.join(baseRoot, 'json/School_msg.json'), 'r', encoding='UTF-8')as fp4:
         sch_data = json.load(fp4)
 
-    path = 'PC/HP_roa/'
+    path = os.path.join(baseRoot,'HP_roa')
 
     for i in range(0, len(maj_id)):
         maj = maj_id[i]

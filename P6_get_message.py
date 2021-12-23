@@ -180,19 +180,20 @@ def change_batch(batch, text_title):
     return batch
 
 
-def get_box_img(box_img):
+def get_box_img(baseRoot, box_img):
     pg_name = box_img['page_name']
     left = box_img['left']
     right = box_img['right']
     up = box_img['up']
     down = box_img['down']
-    img = cv.imread('PC/HP_roa/' + pg_name, 0)
+    openPath = os.path.join(baseRoot, 'HP_roa', pg_name)
+    img = cv.imread(openPath, 0)
     img = img[up:down, left:right]
     return img
 
 
-def fix_maj_id_box(box_maj):
-    img = get_box_img(box_maj)
+def fix_maj_id_box(baseRoot, box_maj):
+    img = get_box_img(baseRoot, box_maj)
     text = box_maj['text']
     # plt.imshow(img,cmap='gray')
     # plt.show()
@@ -231,18 +232,6 @@ def get_maj_id_order(maj_id):
             y = ord(maj_id[1]) - ord('A') + 10
         ans = x * 36 + y
     return ans
-
-
-def save_maj_id_box(box_maj, name_num):
-    if box_maj['right'] - box_maj['left'] >= 100:
-        name_num = name_num + 1
-        save_box(box_maj, name_num)
-
-
-def save_box(box_maj_save, img_name):
-    img = get_box_img(box_maj_save)
-    # print('PC/HP_maj/' + str(img_name) + '.jpg')
-    cv.imwrite('PC/HP_maj/' + str(img_name) + '.jpg', img)
 
 
 def get_message(baseRoot):
@@ -348,7 +337,7 @@ def get_message(baseRoot):
                 if is_Major(page_name, box_id) or is_half_Major(page_name, box_id):
                     # save_maj_id_box(box, maj_cnt)
                     if box['text'].find('Q') != -1:
-                        box = fix_maj_id_box(box)
+                        box = fix_maj_id_box(baseRoot, box)
                     halfMajorList.append([page_name, box_id])
                     text = box['text']
                     # 记录一个专业总体的位置
@@ -442,7 +431,6 @@ def get_message(baseRoot):
                         Major.clear()
                         if is_Major(page_name, box_id):
                             page_name, box_id = last_box(page_name, box_id)
-                            box = box_data[page_name][box_id]
                 # 下一个框框
                 page_name, box_id = next_box(page_name, box_id)
                 if box_id == -1 or page_name == end_page_name:
@@ -495,7 +483,7 @@ def get_message(baseRoot):
 
 def main():
     pass
-    # get_message('PC3')
+    get_message('PC3')
     # process_sch_msg('PC3')
 
 

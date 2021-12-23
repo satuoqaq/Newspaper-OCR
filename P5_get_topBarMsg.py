@@ -80,7 +80,6 @@ def get_topbar_data(baseRoot, specific_pages=None):
 
         page_number, class_info = check_page_data(ori_img)
         tqdm.write('{}> page{},{}'.format(img_name, page_number, class_info))
-
         page_infos[img_name] = {'page_number': page_number,
                                 'class_info': class_info}
     page_infos = recheck_page_number(page_infos)

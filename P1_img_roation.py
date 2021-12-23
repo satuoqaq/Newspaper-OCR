@@ -7,8 +7,8 @@ import os
 # *所有参数*
 
 # 图片路径
-initialImgRoot = 'PC/HP/'
-ImgRoaRoot = 'PC/HP_roa/'
+# initialImgRoot = 'PC/HP/'
+# ImgRoaRoot = 'PC/HP_roa/'
 
 
 def imgSort_and_Rename(imgRoot):
@@ -103,9 +103,9 @@ def get_roa_img(imgRoot, saveRoot):
         print('步骤一:图片旋转完成！')
 
 def main():
-    # pass
-    imgSort_and_Rename(initialImgRoot)
-    get_roa_img(initialImgRoot, ImgRoaRoot)
+    pass
+    # imgSort_and_Rename(initialImgRoot)
+    # get_roa_img(initialImgRoot, ImgRoaRoot)
 
 
 if __name__ == "__main__":

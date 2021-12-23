@@ -11,9 +11,9 @@ from P5_get_box import get_img_box
 import numpy as np
 import os
 
-openRoaImgPath = 'PC/HP_roa'
-saveJsonPath = 'json/box.json'
-saveImgPath = 'PC/HP_box'
+# openRoaImgPath = 'PC/HP_roa'
+# saveJsonPath = 'json/box.json'
+# saveImgPath = 'PC/HP_box'
 IsSave = True
 
 
@@ -193,7 +193,8 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
 
 
 def main():
-    getBoxAndRecognize(openRoaImgPath, saveImgPath, saveJsonPath)
+    pass
+    # getBoxAndRecognize(openRoaImgPath, saveImgPath, saveJsonPath)
 
 
 if __name__ == "__main__":
