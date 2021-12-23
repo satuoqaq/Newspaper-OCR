@@ -18,7 +18,7 @@ def fix_wrong_msg(baseRoot):
     with open(os.path.join(baseRoot, 'json/School_msg.json'), 'r', encoding='UTF-8')as fp4:
         sch_data = json.load(fp4)
 
-    path = os.path.join(baseRoot,'HP_roa')
+    path = os.path.join(baseRoot, 'HP_roa')
 
     for i in range(0, len(maj_id)):
         maj = maj_id[i]
@@ -31,10 +31,10 @@ def fix_wrong_msg(baseRoot):
         print('专业学费:', maj['tuition'])
 
         page_name = maj['page_name']
-        img_path = path + page_name
+        img_path = os.path.join(path, page_name)
         img = cv.imread(img_path)
-        left = maj['left']
-        right = maj['right']
+        left = max(0, maj['left'] - 100)
+        right = min(maj['right'] + 100, img.shape[1])
         up = max(0, maj['up'] - 50)
         down = min(maj['down'] + 50, img.shape[0])
         img = img[up:down, left:right]
@@ -67,7 +67,7 @@ def fix_wrong_msg(baseRoot):
     #     up = maj['up']
     #     down = maj['down']
     #     page_name = maj['page_name']
-    #     img_path = path + page_name
+    #     img_path = os.path.join(path, page_name)
     #     img = cv.imread(img_path)
     #     img = img[up:down, left:right]
     #     img = cv.resize(img, (int(img.shape[1] * 0.5), int(img.shape[0] * 0.5)))
@@ -92,7 +92,7 @@ def fix_wrong_msg(baseRoot):
     #     up = maj['up']
     #     down = maj['down']
     #     page_name = maj['page_name']
-    #     img_path = path + page_name
+    #     img_path = os.path.join(path, page_name)
     #     img = cv.imread(img_path)
     #     img = img[up:down, left:right]
     #     img = cv.resize(img, (int(img.shape[1] * 0.5), int(img.shape[0] * 0.5)))
