@@ -9,7 +9,7 @@ import numpy as np
 
 kernel = np.ones((5, 5), np.uint8)
 
-ocr = PaddleOCR(use_angle_cls=False, lang="ch", use_gpu=True)
+ocr = PaddleOCR(use_angle_cls=False, lang="ch", use_gpu=False)
 # ocr = ocr_model
 
 

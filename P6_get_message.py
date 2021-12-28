@@ -234,6 +234,17 @@ def get_maj_id_order(maj_id):
     return ans
 
 
+def maj_id_wrong_change(name):
+    if name == '00' or name == 'QQ':
+        name = '0Q'
+    if name.find('I') != -1:
+        name = name.replace('I', '1')
+    if name.find('Z') != -1:
+        name = name.replace('Z', '2')
+
+    return name
+
+
 def get_message(baseRoot):
     School_list = []
     School = {}
@@ -245,7 +256,8 @@ def get_message(baseRoot):
     start_fg = 0
     start_text = '本科'
     page_name = '0000.jpg'
-    end_page_name = '0180.jpg'
+    imgNameList = os.listdir(os.path.join(baseRoot, 'HP_roa'))
+    end_page_name = str(len(imgNameList)).zfill(4) + '.jpg'
     end_text = '三、藏文、彝文一类模式'
     AS = '理科'  # 文理科(arts or science)
     Batch = '本一'  # 本科 本科提前批 本一 本二 专科
@@ -297,7 +309,8 @@ def get_message(baseRoot):
             if len(text) > 4:
                 Sch_name = Sch_name + text[4:]
             page_name, box_id = next_box(page_name, box_id)
-            if box_id == -1 or page_name == end_page_name:
+            # if box_id == -1 or page_name == end_page_name1:
+            if box_id == -1 :
                 break
             box = box_data[page_name][box_id]
             while not is_Sch_place(box) and box['text'][0:2] != '地址':
@@ -305,7 +318,7 @@ def get_message(baseRoot):
                     (School['left'], School['right'], School['up'], School['down'], box)
                 Sch_name = Sch_name + box['text']
                 page_name, box_id = next_box(page_name, box_id)
-                if box_id == -1 or page_name == end_page_name:
+                if box_id == -1 :
                     break
                 box = box_data[page_name][box_id]
             # 找到学校结尾了
@@ -323,10 +336,10 @@ def get_message(baseRoot):
             # 以上代码是从学校代码找到'地址'作为学校代码,名字,以及招生人数的结尾
 
             # 以下进入专业的寻找
-            if box_id == -1 or page_name == end_page_name:
+            if box_id == -1 :
                 break
             page_name, box_id = next_box(page_name, box_id)
-            if box_id == -1 or page_name == end_page_name:
+            if box_id == -1 :
                 break
             box = box_data[page_name][box_id]
             School['left'], School['right'], School['up'], School['down'] = get_maj_range \
@@ -351,14 +364,14 @@ def get_message(baseRoot):
                     Major['place'] = '0'
                     if is_Major(page_name, box_id):
                         Major['id'] = text[:2]
+                        Major_name = Major_name + text[2:]
                     else:
                         Major['id'] = text[:1]
+                        Major_name = Major_name + text[1:]
                     Major['id'] = Major['id'].upper()
                     Major['id'] = Major['id'].replace('O', '0')
-                    if len(text) > 2:
-                        Major_name = Major_name + text[2:]
                     page_name, box_id = next_box(page_name, box_id)
-                    if box_id == -1 or page_name == end_page_name:
+                    if box_id == -1 :
                         break
                     box = box_data[page_name][box_id]
                     Major['left'], Major['right'], Major['up'], Major['down'] = get_maj_range \
@@ -375,7 +388,7 @@ def get_message(baseRoot):
                             Major_name = Major_name + box['text']
                         # 下一个框框
                         page_name, box_id = next_box(page_name, box_id)
-                        if box_id == -1 or page_name == end_page_name:
+                        if box_id == -1 :
                             break
                         box = box_data[page_name][box_id]
                         Major['left'], Major['right'], Major['up'], Major['down'] = \
@@ -418,10 +431,17 @@ def get_message(baseRoot):
                         elif len(Major_list) > 1:
                             last_maj = Major_list[len(Major_list) - 2]
                             if get_maj_id_order(Major['id']) <= get_maj_id_order(last_maj['id']):
-                                last_maj['sch_index'] = len(School_list)
-                                last_maj['maj_index'] = len(Major_list) - 2
-                                wrong_maj_id.append(copy.deepcopy(last_maj))
-                                wrong_maj_id.append(copy.deepcopy(Major))
+                                new_maj_id_last = maj_id_wrong_change(last_maj['id'])
+                                new_maj_id = maj_id_wrong_change(Major['id'])
+                                if get_maj_id_order(Major['id']) > get_maj_id_order(new_maj_id_last):
+                                    Major_list[len(Major_list) - 2]['id'] = new_maj_id_last
+                                elif get_maj_id_order(new_maj_id) > get_maj_id_order(last_maj['id']):
+                                    Major_list[len(Major_list) - 1]['id'] = new_maj_id
+                                else:
+                                    last_maj['sch_index'] = len(School_list)
+                                    last_maj['maj_index'] = len(Major_list) - 2
+                                    wrong_maj_id.append(copy.deepcopy(last_maj))
+                                    wrong_maj_id.append(copy.deepcopy(Major))
                         if Major['name'] == '':
                             wrong_maj_name.append(copy.deepcopy(Major))
                         if Major['place'] == '0' and School['place'] != '0':
@@ -433,7 +453,7 @@ def get_message(baseRoot):
                             page_name, box_id = last_box(page_name, box_id)
                 # 下一个框框
                 page_name, box_id = next_box(page_name, box_id)
-                if box_id == -1 or page_name == end_page_name:
+                if box_id == -1 :
                     break
                 box = box_data[page_name][box_id]
                 if 120 < box['down'] - box['up']:
@@ -459,11 +479,11 @@ def get_message(baseRoot):
                       School['page_num'])
                 School_list.append(copy.deepcopy(School))
                 School.clear()
-            if box_id == -1 or page_name == end_page_name:
+            if box_id == -1 :
                 break
             # print(box['text'])
         page_name, box_id = next_box(page_name, box_id)
-        if box_id == -1 or page_name == end_page_name:
+        if box_id == -1 :
             break
 
     with open(os.path.join(baseRoot, 'json/School_msg.json'), 'w', encoding='UTF-8') as f:
@@ -483,8 +503,7 @@ def get_message(baseRoot):
 
 def main():
     pass
-    get_message('PC3')
-    # process_sch_msg('PC3')
+    get_message('PC')
 
 
 if __name__ == '__main__':

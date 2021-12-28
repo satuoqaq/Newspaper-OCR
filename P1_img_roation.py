@@ -4,6 +4,7 @@ import cv2 as cv
 import numpy as np
 import os
 
+
 # *所有参数*
 
 # 图片路径
@@ -50,7 +51,7 @@ def get_roa_img(imgRoot, saveRoot):
     for i in range(startPage, endPage):
         name = str(i).zfill(4) + '.jpg'
         print(name)
-        imgPath = imgRoot + name
+        imgPath = os.path.join(imgRoot, name)
         # 取出图片并二值化
         imgStart = cv.imread(imgPath, 0)
         # 截取顶栏位置寻找直线
@@ -101,6 +102,7 @@ def get_roa_img(imgRoot, saveRoot):
         imgRoa = cv.warpAffine(imgStart, matRoa, (imgStart.shape[1], imgStart.shape[0]), borderValue=255)
         cv.imwrite(os.path.join(saveRoot, name), imgRoa)
         print('步骤一:图片旋转完成！')
+
 
 def main():
     pass

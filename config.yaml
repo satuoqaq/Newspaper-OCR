@@ -1,0 +1,4 @@
+use gpu: False
+start text: '本科'
+end text: '三、藏文、彝文一类模式'
+AS: '理科'
