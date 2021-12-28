@@ -10,6 +10,7 @@ import re
 from P5_get_box import get_img_box
 import numpy as np
 import os
+from P0_init import conf
 
 # openRoaImgPath = 'PC/HP_roa'
 # saveJsonPath = 'json/box.json'
@@ -23,7 +24,7 @@ def init_rec_model(use_gpu, rec_model_dir, rec_char_dict_path, det_model_dir, cl
                                 rec_model_dir=rec_model_dir,
                                 cls_model_dir=cls_model_dir,
                                 rec_char_dict_path=rec_char_dict_path,
-                                use_gpu=use_gpu)
+                                use_gpu=conf['use gpu'])
     return text_recognizer
 
 
@@ -58,14 +59,6 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
            :param imageRoot: 图片打开路径 str
            :param savePath: 图片储存路径 str
     """
-    # 设置模型路径
-    use_gpu = True
-    rec_model_dir = 'PaddleOCR/inference/ch_ppocr_server_v2.0_rec_infer'
-    rec_char_dict_path = 'ppocr/utils/ppocr_keys_v1.txt'
-    det_model_dir = 'PaddleOCR/model/210924_ch_ppocr_server_v2.0_infer/det'
-    cls_model_dir = 'PaddleOCR/model/210924_ch_ppocr_server_v2.0_infer/cls'
-
-    # model = init_rec_model(use_gpu, rec_model_dir, rec_char_dict_path, det_model_dir, cls_model_dir)
     model = ocr_model
 
     # 打开之前得到的分栏位置,对图片进行分栏

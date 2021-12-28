@@ -6,11 +6,11 @@ import re
 import matplotlib.pyplot as plt
 import copy
 import numpy as np
+from P0_init import conf
 
 kernel = np.ones((5, 5), np.uint8)
 
-ocr = PaddleOCR(use_angle_cls=False, lang="ch", use_gpu=False)
-# ocr = ocr_model
+ocr = PaddleOCR(use_angle_cls=False, lang="ch", use_gpu=conf['use gpu'])
 
 
 def get_right_value(ysum, lpos):

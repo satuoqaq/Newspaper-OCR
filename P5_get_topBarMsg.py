@@ -7,6 +7,7 @@ import cv2
 import os.path as osp
 import numpy as np
 from tqdm import tqdm
+from P0_init import conf
 from P2_img_split import get_image_names
 import json
 import re
@@ -59,7 +60,7 @@ rec_model_dir = 'PaddleOCR/inference/ch_ppocr_server_v2.0_rec_infer'
 rec_char_dict_path = 'ppocr/utils/ppocr_keys_v1.txt'
 det_model_dir = 'PaddleOCR/model/210924_ch_ppocr_server_v2.0_infer/det'
 cls_model_dir = 'PaddleOCR/model/210924_ch_ppocr_server_v2.0_infer/cls'
-use_gpu = False
+use_gpu = conf['use gpu']
 
 ocr_model = init_rec_model(use_gpu, rec_model_dir, rec_char_dict_path, det_model_dir, cls_model_dir)
 
@@ -280,9 +281,9 @@ def get_default_pagenumber(page_number_img):
             break
     page_number_img = page_number_img[:, start_idx:page_number_w - end_idx]
     page_number_img = cv2.dilate(page_number_img, np.ones((3, 3), np.uint8))
-    plt.imshow(page_number_img)
-    plt.axis('off')
-    plt.show()
+    # plt.imshow(page_number_img)
+    # plt.axis('off')
+    # plt.show()
     ocr_results = ocr_model.ocr(page_number_img, det=True, cls=False)
     ocr_results = sorted(ocr_results, key=lambda x: x[-1], reverse=True)  # 按置信度降序排列
     try:

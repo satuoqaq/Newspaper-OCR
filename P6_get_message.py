@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import json
 import sys
 import cv2 as cv
+from P0_init import conf
 from P6_only_en_rec import maj_id_rec
 from P6_Post_processing import process_sch_msg
 import xlwt
@@ -254,12 +255,12 @@ def get_message(baseRoot):
     json_box_name = os.path.join(baseRoot, 'json/box.json')
     json_pageMsg_name = os.path.join(baseRoot, 'json/page_msg.json')
     start_fg = 0
-    start_text = '本科'
+    start_text = conf['start text']
     page_name = '0000.jpg'
     imgNameList = os.listdir(os.path.join(baseRoot, 'HP_roa'))
     end_page_name = str(len(imgNameList)).zfill(4) + '.jpg'
-    end_text = '三、藏文、彝文一类模式'
-    AS = '理科'  # 文理科(arts or science)
+    end_text = conf['end text']
+    AS = conf['AS']  # 文理科(arts or science)
     Batch = '本一'  # 本科 本科提前批 本一 本二 专科
     box_id = 0
     global box_data

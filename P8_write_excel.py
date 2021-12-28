@@ -29,7 +29,7 @@ def write_excel(baseRoot):
         sheet.write(i + 1, 3, sch['batch'])
         sheet.write(i + 1, 4, sch['id'])
         sheet.write(i + 1, 5, sch['name'])
-        sheet.write(i + 1, 6, sch['place'])
+        sheet.write(i + 1, 6, int(sch['place']))
         sheet.write(i + 1, 8, sch['page_num'])
         sheet.write(i + 1, 9, sch['page_name'])
         sum_place = 0
@@ -44,8 +44,8 @@ def write_excel(baseRoot):
             sheet2.write(num, 5, sch['name'])
             sheet2.write(num, 6, maj['id'])
             sheet2.write(num, 7, maj['name'])
-            sheet2.write(num, 8, maj['place'])
-            sheet2.write(num, 9, '4')
+            sheet2.write(num, 8, int(maj['place']))
+            sheet2.write(num, 9, 4)
             sheet2.write(num, 10, maj['tuition'])
             if maj['place'] != '0' and len(maj['id']) == 2:
                 sheet2.write(num, 11, 'ac')
@@ -63,10 +63,11 @@ def write_excel(baseRoot):
             sheet.write(i + 1, 10, 'AC')
 
     book.save(os.path.join(baseRoot, 'ans.xls'))
+    print('已成功写入excel!')
 
 
 def main():
-    write_excel('PC')
+    write_excel('PC3')
 
 
 if __name__ == "__main__":
