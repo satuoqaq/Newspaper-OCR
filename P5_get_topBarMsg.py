@@ -280,9 +280,9 @@ def get_default_pagenumber(page_number_img):
             break
     page_number_img = page_number_img[:, start_idx:page_number_w - end_idx]
     page_number_img = cv2.dilate(page_number_img, np.ones((3, 3), np.uint8))
-    # plt.imshow(page_number_img)
-    # plt.axis('off')
-    # plt.show()
+    plt.imshow(page_number_img)
+    plt.axis('off')
+    plt.show()
     ocr_results = ocr_model.ocr(page_number_img, det=True, cls=False)
     ocr_results = sorted(ocr_results, key=lambda x: x[-1], reverse=True)  # 按置信度降序排列
     try:

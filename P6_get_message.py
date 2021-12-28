@@ -107,7 +107,7 @@ def is_Major_place(box):
     text = text.replace('.', '')
     l_edge = box['l_edge']
     left = box['left']
-    if len(text) <= 3 and left > l_edge + 1350 and (is_num(text) and int(text) < 500):
+    if len(text) <= 3 and left > l_edge + 1350 and (is_num(text) and int(text) < 1000):
         return True
     return False
 
@@ -142,7 +142,7 @@ def is_Major_tuition(box):
     left = box['left']
     if len(text) >= 2 and left > l_edge + 1350 and (
             # or int(text)==0 是一个特判,有一个0的情况
-            text == '免费' or text == '待定' or (is_num(text) and (int(text) > 500 or int(text) == 0))):
+            text == '免费' or text == '待定' or (is_num(text) and (int(text) >= 1000 or int(text) == 0))):
         return True
     return False
 

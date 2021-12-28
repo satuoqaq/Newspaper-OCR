@@ -66,7 +66,7 @@ def write_excel(baseRoot):
 
 
 def main():
-    write_excel('PC3')
+    write_excel('PC')
 
 
 if __name__ == "__main__":
