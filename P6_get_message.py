@@ -504,7 +504,7 @@ def get_message(baseRoot):
 
 def main():
     pass
-    get_message('PC')
+    get_message('PC3')
 
 
 if __name__ == '__main__':

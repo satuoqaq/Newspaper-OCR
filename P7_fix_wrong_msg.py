@@ -20,36 +20,36 @@ def fix_wrong_msg(baseRoot):
 
     path = os.path.join(baseRoot, 'HP_roa')
 
-    # for i in range(0, len(maj_id)):
-    #     maj = maj_id[i]
-    #
-    #     print('***********************************************')
-    #     print('页码:', maj['page_name'])
-    #     print('专业id:', maj['id'], ' ------需修改')
-    #     print('专业名称:', maj['name'])
-    #     print('专业名额:', maj['place'])
-    #     print('专业学费:', maj['tuition'])
-    #
-    #     page_name = maj['page_name']
-    #     img_path = os.path.join(path, page_name)
-    #     img = cv.imread(img_path)
-    #     left = max(0, maj['left'] - 100)
-    #     right = min(maj['right'] + 100, img.shape[1])
-    #     up = max(0, maj['up'] - 50)
-    #     down = min(maj['down'] + 50, img.shape[0])
-    #     img = img[up:down, left:right]
-    #     img = cv.resize(img, (int(img.shape[1] * 0.5), int(img.shape[0] * 0.5)))
-    #     plt.imshow(img)
-    #     plt.axis('off')
-    #     plt.show()
-    #     print(sch_data[maj['sch_index']]['name'])
-    #     new_maj_id = input("请输入专业id,若无需修改则回车:")
-    #     if new_maj_id != '':
-    #         maj['id'] = new_maj_id
-    #     new_maj_name = input("请输入专业name,若无需修改则回车:")
-    #     if new_maj_name != '':
-    #         maj['name'] = new_maj_name
-    #     sch_data[maj['sch_index']]['Major_list'][maj['maj_index']] = maj
+    for i in range(0, len(maj_id)):
+        maj = maj_id[i]
+
+        print('***********************************************')
+        print('页码:', maj['page_name'])
+        print('专业id:', maj['id'], ' ------需修改')
+        print('专业名称:', maj['name'])
+        print('专业名额:', maj['place'])
+        print('专业学费:', maj['tuition'])
+
+        page_name = maj['page_name']
+        img_path = os.path.join(path, page_name)
+        img = cv.imread(img_path)
+        left = max(0, maj['left'] - 100)
+        right = min(maj['right'] + 100, img.shape[1])
+        up = max(0, maj['up'] - 50)
+        down = min(maj['down'] + 50, img.shape[0])
+        img = img[up:down, left:right]
+        img = cv.resize(img, (int(img.shape[1] * 0.5), int(img.shape[0] * 0.5)))
+        plt.imshow(img)
+        plt.axis('off')
+        plt.show()
+        print(sch_data[maj['sch_index']]['name'])
+        new_maj_id = input("请输入专业id,若无需修改则回车:")
+        if new_maj_id != '':
+            maj['id'] = new_maj_id
+        new_maj_name = input("请输入专业name,若无需修改则回车:")
+        if new_maj_name != '':
+            maj['name'] = new_maj_name
+        sch_data[maj['sch_index']]['Major_list'][maj['maj_index']] = maj
 
     for i in range(0, len(maj_place)):
         maj = maj_place[i]

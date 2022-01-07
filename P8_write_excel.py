@@ -1,7 +1,7 @@
 import os.path
-
 import json
 import xlwt
+from P0_init import conf
 
 
 def write_excel(baseRoot):
@@ -23,9 +23,9 @@ def write_excel(baseRoot):
     num = 1
     for i in range(0, len(sch_data)):
         sch = sch_data[i]
-        sheet.write(i + 1, 0, 2020)
-        sheet.write(i + 1, 1, '四川')
-        sheet.write(i + 1, 2, sch['as'])
+        sheet.write(i + 1, 0, conf['Year'])
+        sheet.write(i + 1, 1, conf['Province'])
+        sheet.write(i + 1, 2, conf['AS'])
         sheet.write(i + 1, 3, sch['batch'])
         sheet.write(i + 1, 4, sch['id'])
         sheet.write(i + 1, 5, sch['name'])
@@ -38,7 +38,7 @@ def write_excel(baseRoot):
             maj = maj_list[j]
             sheet2.write(num, 0, 2020)
             sheet2.write(num, 1, '四川')
-            sheet2.write(num, 2, sch['as'])
+            sheet2.write(num, 2, conf['AS'])
             sheet2.write(num, 3, sch['batch'])
             sheet2.write(num, 4, sch['id'])
             sheet2.write(num, 5, sch['name'])
