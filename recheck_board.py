@@ -5,6 +5,7 @@ import os
 import tkinter as tk
 from tkinter.messagebox import showinfo
 from PIL import Image, ImageTk
+import torch
 
 
 class CheckBoard:
@@ -118,12 +119,15 @@ class CheckBoard:
     @classmethod
     def main_edit(cls):
         # maj = None
-        if cls.fix_what == 'id':
+        if cls.fix_what == 'id' and cls.major_id < len(cls.id_infos):
             cls.window.title('招生考试报识别-专业id人工检查 {}/{}'.format(cls.major_id + 1, cls.total_major_id_num))
             maj = cls.id_infos[cls.major_id]
-        elif cls.fix_what == 'place':
+        elif cls.fix_what == 'place' and cls.major_place < len(cls.place_infos):
             cls.window.title('招生考试报识别-专业名额人工检查 {}/{}'.format(cls.major_place + 1, cls.total_major_place_num))
             maj = cls.place_infos[cls.major_place]
+        else:
+            showinfo('检查完成', '已完成所有需要检查的项目')
+            maj = None
 
         cls.editing_maj = maj
 

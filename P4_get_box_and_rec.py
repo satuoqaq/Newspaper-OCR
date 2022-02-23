@@ -1,9 +1,11 @@
 import copy
 import math
 import os
+import time
+
 from PaddleOCR.paddleocr import PaddleOCR
 from P5_get_topBarMsg import ocr_model
-
+from tqdm import tqdm
 import json
 import cv2 as cv
 import re
@@ -19,13 +21,13 @@ IsSave = True
 
 
 # 定义模型
-def init_rec_model(use_gpu, rec_model_dir, rec_char_dict_path, det_model_dir, cls_model_dir):
-    text_recognizer = PaddleOCR(det_model_dir=det_model_dir,
-                                rec_model_dir=rec_model_dir,
-                                cls_model_dir=cls_model_dir,
-                                rec_char_dict_path=rec_char_dict_path,
-                                use_gpu=conf['use gpu'])
-    return text_recognizer
+# def init_rec_model(use_gpu, rec_model_dir, rec_char_dict_path, det_model_dir, cls_model_dir):
+#     text_recognizer = PaddleOCR(det_model_dir=det_model_dir,
+#                                 rec_model_dir=rec_model_dir,
+#                                 cls_model_dir=cls_model_dir,
+#                                 rec_char_dict_path=rec_char_dict_path,
+#                                 use_gpu=conf['use gpu'])
+#     return text_recognizer
 
 
 # 设置只进行识别的ocr模型
@@ -73,6 +75,7 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
     startPage, endPage = 0, len(imgNameList)
 
     # 对所有图片一页一页进行识别
+    t = time.time()
     for pageNum in range(0, endPage):
         # 取出图片
         imgName = str(pageNum).zfill(4) + '.jpg'
@@ -122,7 +125,8 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
         img2 = img.copy()
 
         # 再对框框进行微调 然后记录对应的左右边距,目的是为了后续判断
-        for boxNum in range(0, boxes.shape[0]):
+
+        for boxNum in tqdm(range(boxes.shape[0])):
             up, down, left, right = boxes[boxNum]
             up = up - 3
             down = down + 5
@@ -165,7 +169,7 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
                        'l_edge': l_edge, 'r_edge': r_edge, 'page_name': imgName}
                 box_list.append(copy.deepcopy(box))
             # 输出答案
-            print(ans)
+            # print(ans)
             # 划线
             cv.line(img, (left, up), (right, up), (0, 0, 255), 2)
             cv.line(img, (left, up), (left, down), (0, 0, 255), 2)
@@ -177,7 +181,9 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
         savePathBox = os.path.join(img_save_path, str(pageNum) + ".jpg")
         print(savePathBox)
         cv.imwrite(savePathBox, img)
-
+        print(time.time() - t)
+        t = time.time()
+        time.sleep(5)
     # 将结果存入json
     json_save_path = os.path.join(baseRoot, 'json/box.json')
     if IsSave:

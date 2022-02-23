@@ -1,3 +1,5 @@
+import time
+
 import cv2 as cv
 import json
 import os
@@ -10,7 +12,6 @@ from P6_get_message import get_message
 from P7_fix_wrong_msg import fix_wrong_msg
 from P8_write_excel import write_excel
 
-
 # 这两个是自己选的路径  一个是图像原始图像的位置 一个是存储所有东西的位置
 openBaseImgPath = 'PC3/HP'
 saveBaseRoot = 'PC3'
@@ -21,6 +22,8 @@ roaSplitImgPath = os.path.join(saveBaseRoot, 'HP_roa_split')
 boxImgPath = os.path.join(saveBaseRoot, 'HP_box')
 jsonPath = os.path.join(saveBaseRoot, 'json')
 
+t = time.time()
+
 
 def make_dir(dir_list):
     for name in dir_list:
@@ -29,17 +32,21 @@ def make_dir(dir_list):
             os.mkdir(name)
 
 
-dirList = [roaImgPath, lineImgPath, roaSplitImgPath, boxImgPath, jsonPath]
-make_dir(dirList)
+# dirList = [roaImgPath, lineImgPath, roaSplitImgPath, boxImgPath, jsonPath]
+# make_dir(dirList)
 # botton 1 处理图片得到box
-get_roa_img(openBaseImgPath, roaImgPath)
-get_com_line(saveBaseRoot, roaImgPath, roaSplitImgPath)
-get_full_line(saveBaseRoot, roaImgPath, lineImgPath)
+# get_roa_img(openBaseImgPath, roaImgPath)
+# get_com_line(saveBaseRoot, roaImgPath, roaSplitImgPath)
+# get_full_line(saveBaseRoot, roaImgPath, lineImgPath)
 getBoxAndRecognize(saveBaseRoot, roaImgPath, boxImgPath)
 # botton 2 然后让他们check一下
-get_topbar_data(saveBaseRoot)
+all_time = time.time() - t
+print('all_time is:', all_time)
+# get_topbar_data(saveBaseRoot)
+
+
 # botton 3  得到学校信息然后纠错
-get_message(saveBaseRoot)
-fix_wrong_msg(saveBaseRoot)
+# get_message(saveBaseRoot)
+# fix_wrong_msg(saveBaseRoot)
 # botton 4 写excel
-write_excel(saveBaseRoot)
+# write_excel(saveBaseRoot)

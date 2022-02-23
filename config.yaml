@@ -5,8 +5,8 @@ start text: '本科'
 # 程序结束文字
 end text: '三、藏文、彝文一类模式'
 # 文理科选择
-AS: '文科'
+AS: '理科'
 # 年份
-Year: 2021
+Year: 2020
 # 省份
 Province: '四川'

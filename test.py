@@ -1,29 +1,26 @@
-# def maj_id_wrong_change(name):
-#     if name == '00' or name == 'QQ':
-#         name = '0Q'
-#     if name.find('I') != -1:
-#         name = name.replace('I', '1')
-#     return name
+# import tkinter as tk
 #
+# import os
 #
-# ans = maj_id_wrong_change('CI')
-# print(ans)
-import cv2
-import matplotlib.pyplot as plt
-import json
-import os
-import matplotlib
+# window = tk.Tk()
+# window.geometry('1000x400')
+# window.title('学习tk')
+# img_w = 800
+# label_img = tk.Label(window, width=img_w, height=2, bg='pink')
+# label_img.pack()
+# # text_page_number = tk.Entry(window)
+# # text_major_id = tk.Entry(window)
+# # text_major_name = tk.Entry(window)
+# # text_major_place = tk.Entry(window)
+# # text_major_tuition = tk.Entry(window)
+# # text_page_number.pack()
+# # text_major_id.pack()
+# # text_major_name.pack()
+# # text_major_place.pack()
+# # text_major_tuition.pack()
+# button_next_img = tk.Button(window, text='下一张')
+# button_next_img.pack()
+# window.mainloop()
 
-# matplotlib.use('TkAgg')
-baseRoot = 'PC'
-page_name = '0000.jpg'
-imgNameList = os.listdir(os.path.join(baseRoot, 'HP_roa'))
-end_page_name = str(len(imgNameList)).zfill(4) + '.jpg'
-
-img_path = os.path.join('PC', 'HP_roa', imgNameList[0])
-img = cv2.imread(img_path)
-# cv2.imshow('img', img)
-# cv2.waitKey(0)
-plt.imshow(img)
-plt.axis('off')
-plt.show()
+import torch
+print(torch.cuda.is_available())

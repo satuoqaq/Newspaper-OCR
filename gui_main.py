@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 import os
@@ -11,6 +12,7 @@ from P6_get_message import get_message
 from P7_fix_wrong_msg import fix_wrong_msg
 from P8_write_excel import write_excel
 from recheck_board import CheckBoard
+
 
 def make_dir(dir_list):
     for name in dir_list:
@@ -57,27 +59,27 @@ def main_window():
     choose_input_button = tk.Button(
         window, text='01.选择原图文件夹', command=click_input_dir)  # 点击时调用函数click_dir
     choose_input_button.grid(
-        row=4, column=1, columnspan=2, ipadx=40, pady=5)  # 第5行，第一列
+        row=4, column=1, columnspan=2, ipadx=40, pady=5)  # 第4行，第一列
     choose_output_button = tk.Button(
-        window, text='02.选择输出文件夹', command=click_output_dir)  # 点击时调用函数click_dir
+        window, text='02.选择输出文件夹', command=click_output_dir)
     choose_output_button.grid(
-        row=5, column=1, columnspan=2, ipadx=40, pady=5)  # 第5行，第一列
+        row=5, column=1, columnspan=2, ipadx=40, pady=5)
     step1_button = tk.Button(
-        window, text='1.处理图片', command=click_step1)  # 点击时调用函数
+        window, text='1.处理图片', command=click_step1)
     step1_button.grid(
-        row=6, column=1, columnspan=2, ipadx=40, pady=5)  # 第5行，第一列
+        row=6, column=1, columnspan=2, ipadx=40, pady=5)
     step2_button = tk.Button(
-        window, text='2.检查页码', command=click_step2)  # 点击时调用函数
+        window, text='2.检查页码', command=click_step2)
     step2_button.grid(
-        row=7, column=1, columnspan=2, ipadx=40, pady=5)  # 第5行，第一列
+        row=7, column=1, columnspan=2, ipadx=40, pady=5)
     step3_button = tk.Button(
-        window, text='3.得到学校信息并纠错', command=click_step3)  # 点击时调用函数
+        window, text='3.得到学校信息并纠错', command=click_step3)
     step3_button.grid(
-        row=8, column=1, columnspan=2, ipadx=40, pady=5)  # 第5行，第一列
+        row=8, column=1, columnspan=2, ipadx=40, pady=5)
     step4_button = tk.Button(
-        window, text='4.写入excel', command=click_step4)  # 点击时调用函数
+        window, text='4.写入excel', command=click_step4)
     step4_button.grid(
-        row=9, column=1, columnspan=2, ipadx=40, pady=5)  # 第5行，第一列
+        row=9, column=1, columnspan=2, ipadx=40, pady=5)
     window.mainloop()
 
 
@@ -96,11 +98,13 @@ def click_output_dir():
 
 
 def click_step1():
+    t = time.time()
     PATHS.init()
     get_roa_img(PATHS.openBaseImgPath, PATHS.roaImgPath)
     get_com_line(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.roaSplitImgPath)
     get_full_line(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.lineImgPath)
     getBoxAndRecognize(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.boxImgPath)
+    print(time.time() - t)
 
 
 def click_step2():
@@ -108,7 +112,7 @@ def click_step2():
 
 
 def click_step3():
-    # get_message(PATHS.saveBaseRoot)
+    get_message(PATHS.saveBaseRoot)
     CheckBoard.fix_wrong_msg(PATHS.saveBaseRoot)
 
 
