@@ -5,12 +5,13 @@ import os
 import tkinter as tk
 from tkinter.messagebox import showinfo
 from PIL import Image, ImageTk
-import torch
 
 
 class CheckBoard:
     window = tk.Tk()
+    # 制定图片以及文字框
     window.geometry('1000x400')  # 窗口大小
+    window.resizable(0, 0)  # 禁止调整窗口大小
     img_w = 800
     label_img = tk.Label(window, width=img_w, height=2, bg="white")
     text_page_number = tk.Entry(window)
@@ -18,8 +19,9 @@ class CheckBoard:
     text_major_name = tk.Entry(window)
     text_major_place = tk.Entry(window)
     text_major_tuition = tk.Entry(window)
+    button_last_img = tk.Button(window, text='上一张')
     button_next_img = tk.Button(window, text='下一张')
-
+    button_finish = tk.Button(window, text='完成')
     id_infos = None
     place_infos = None
     norm_data = None
@@ -48,9 +50,13 @@ class CheckBoard:
         tk.Label(cls.window, text="专业学费").pack(fill=tk.X)
         cls.text_major_tuition.pack(fill=tk.X)
         tk.Label(cls.window, text=" ").pack(fill=tk.X)
+        cls.button_last_img.config(command=cls.click_last_page)
+        cls.button_last_img.pack(fill=tk.X, pady=5)
         cls.button_next_img.config(command=cls.click_next_page)
-        cls.button_next_img.pack(fill=tk.X)
-
+        cls.button_next_img.pack(fill=tk.X, pady=5)
+        cls.button_finish.config(command=cls.click_finish)
+        cls.button_finish.pack(fill=tk.X, pady=5)
+        # 设置背景颜色
         img = np.zeros((1, 800, 3), np.uint8)
         img.fill(255)
         cls.edit_img_label_img(img)
@@ -92,11 +98,12 @@ class CheckBoard:
         savePath = os.path.join(cls.base_root_path, 'json/School_msg.json')
         with open(savePath, 'w', encoding='UTF-8') as f:
             f.write(json.dumps(cls.norm_data, ensure_ascii=False, indent=4))
-        showinfo('检查完成', '已完成所有需要检查的项目')
+        showinfo('检查完成', '已完成所有需要检查的项目,保存成功')
         cls.window.destroy()
 
     @classmethod
-    def click_next_page(cls):
+    # 保存修改信息
+    def save_current_message(cls):
         # 保存当前修改的信息 id & name
         cls.editing_maj['id'] = cls.text_major_id.get()
         cls.editing_maj['name'] = cls.text_major_name.get()
@@ -104,17 +111,54 @@ class CheckBoard:
         cls.editing_maj['tuition'] = cls.text_major_tuition.get()
         print(cls.editing_maj)
         cls.norm_data[cls.editing_maj['sch_index']]['Major_list'][cls.editing_maj['maj_index']] = cls.editing_maj
+
+    @classmethod
+    # 保存并且翻到上一张去
+    def click_last_page(cls):
+        cls.save_current_message()
+        # 上一张
+        if cls.fix_what == 'id':
+            if cls.major_id > 0:
+                cls.major_id -= 1
+            else:
+                showinfo('error', '已经是第一条信息了')
+        elif cls.fix_what == 'place':
+            if cls.major_place > 0:
+                cls.major_place -= 1
+            else:
+                showinfo('', '已经是最后一条信息了')
+        cls.main_edit()
+
+    @classmethod
+    # 保存并且翻到下一张去
+    def click_next_page(cls):
+        cls.save_current_message()
         # 下一张
         if cls.fix_what == 'id':
-            cls.major_id += 1
-            if cls.major_id >= cls.total_major_id_num:
-                cls.fix_what = 'place'
+            if cls.major_id + 1 < cls.total_major_id_num:
+                cls.major_id += 1
+            else:
+                showinfo('', '已经是最后一条信息了')
         elif cls.fix_what == 'place':
-            cls.major_place += 1
-            if cls.major_place >= cls.total_major_place_num:
-                cls.end_message_box()
-                return
+            if cls.major_place + 1 < cls.total_major_place_num:
+                cls.major_place += 1
+            else:
+                showinfo('', '已经是最后一条信息了')
         cls.main_edit()
+
+    @classmethod
+    # 点击完成表示这种错误核查完毕
+    def click_finish(cls):
+        cls.save_current_message()
+        if cls.fix_what == 'id':
+            if cls.total_major_place_num:
+                cls.fix_what = 'place'
+                showinfo('提示', '开始核查专业名额错误')
+                cls.main_edit()
+            else:
+                cls.end_message_box()
+        elif cls.fix_what == 'place':
+            cls.end_message_box()
 
     @classmethod
     def main_edit(cls):
@@ -126,7 +170,6 @@ class CheckBoard:
             cls.window.title('招生考试报识别-专业名额人工检查 {}/{}'.format(cls.major_place + 1, cls.total_major_place_num))
             maj = cls.place_infos[cls.major_place]
         else:
-            showinfo('检查完成', '已完成所有需要检查的项目')
             maj = None
 
         cls.editing_maj = maj
@@ -149,6 +192,15 @@ class CheckBoard:
     def fix_wrong_msg(cls, baseRoot):
         cls.init_board_window()
 
+        # with open(os.path.join(baseRoot, 'json/wrong_maj_id.json'), 'r', encoding='UTF-8') as fp:
+        #     cls.id_infos = json.load(fp)
+        #
+        # with open(os.path.join(baseRoot, 'json/wrong_maj_place.json'), 'r', encoding='UTF-8') as fp1:
+        #     cls.place_infos = json.load(fp1)
+        #
+        # with open(os.path.join(baseRoot, 'json/School_msg.json'), 'r', encoding='UTF-8') as fp4:
+        #     cls.norm_data = json.load(fp4)
+        #
         with open(os.path.join(baseRoot, 'json/wrong_maj_id.json'), 'r', encoding='UTF-8') as fp:
             cls.id_infos = json.load(fp)
 
@@ -162,6 +214,11 @@ class CheckBoard:
         cls.total_major_id_num = len(cls.id_infos)
         cls.major_place = 0
         cls.total_major_place_num = len(cls.place_infos)
+        if cls.total_major_id_num == 0:
+            cls.fix_what = 'place'
+            if cls.total_major_place_num == 0:
+                showinfo('核查完成', '没有需要修改的信息')
+                return
         cls.base_root_path = baseRoot
         cls.roa_path = os.path.join(baseRoot, 'HP_roa')
         cls.main_edit()

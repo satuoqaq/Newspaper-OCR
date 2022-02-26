@@ -9,7 +9,7 @@ from P3_get_full_line import get_full_line
 from P4_get_box_and_rec import getBoxAndRecognize
 from P5_get_topBarMsg import get_topbar_data
 from P6_get_message import get_message
-from P7_fix_wrong_msg import fix_wrong_msg
+# from P7_fix_wrong_msg import fix_wrong_msg
 from P8_write_excel import write_excel
 from recheck_board import CheckBoard
 
