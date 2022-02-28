@@ -207,7 +207,7 @@ def get_right_split_line(binary_img, kernel):
 
 
 def main():
-    get_com_line('PC/HP_roa', 'PC/HP_roa_split')
+    get_com_line('PC2/HP_roa', 'PC2/HP_roa_split')
 
 
 if __name__ == "__main__":

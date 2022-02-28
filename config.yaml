@@ -1,5 +1,5 @@
 # 是否是用GPU
-use gpu: False
+use gpu: True
 # 程序起始文字
 start text: '本科'
 # 程序结束文字

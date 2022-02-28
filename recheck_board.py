@@ -226,4 +226,4 @@ class CheckBoard:
 
 
 if __name__ == '__main__':
-    CheckBoard.fix_wrong_msg("PC")
+    CheckBoard.fix_wrong_msg("PC2")

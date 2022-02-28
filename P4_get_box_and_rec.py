@@ -14,9 +14,9 @@ import numpy as np
 import os
 from P0_init import conf
 
-# openRoaImgPath = 'PC/HP_roa'
+# openRoaImgPath = 'PC2/HP_roa'
 # saveJsonPath = 'json/box.json'
-# saveImgPath = 'PC/HP_box'
+# saveImgPath = 'PC2/HP_box'
 IsSave = True
 
 

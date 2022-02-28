@@ -8,8 +8,8 @@ import os
 # *所有参数*
 
 # 图片路径
-# initialImgRoot = 'PC/HP/'
-# ImgRoaRoot = 'PC/HP_roa/'
+# initialImgRoot = 'PC2/HP/'
+# ImgRoaRoot = 'PC2/HP_roa/'
 
 
 def imgSort_and_Rename(imgRoot):

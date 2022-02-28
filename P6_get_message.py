@@ -415,7 +415,7 @@ def get_message(baseRoot):
                         if is_num(Major['place']):
                             Sch_sum_place_check = Sch_sum_place_check + int(Major['place'])
 
-                        # img = cv.imread('PC/HP_roa/' + Major['page_name'])
+                        # img = cv.imread('PC2/HP_roa/' + Major['page_name'])
                         # img_new = img[Major['up']:Major['down'], Major['left']:Major['right']]
                         # plt.imshow(img_new)
                         # plt.axis('off')

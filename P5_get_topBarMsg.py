@@ -351,8 +351,8 @@ def get_title_topbar_data(ori_img):
 
 
 def main():
-    # get_topbar_data('PC/HP_upper/', list(range(0, 2)))
-    get_topbar_data('PC/HP_roa_split/uppers/')
+    # get_topbar_data('PC2/HP_upper/', list(range(0, 2)))
+    get_topbar_data('PC2/HP_roa_split/uppers/')
 
 
 if __name__ == "__main__":

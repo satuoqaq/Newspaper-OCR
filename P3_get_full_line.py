@@ -2,8 +2,8 @@ import cv2 as cv
 import json
 import os
 
-imgOpenPath = 'PC/HP_roa'
-imgDrawLinePath = 'PC/HP_line'
+imgOpenPath = 'PC2/HP_roa'
+imgDrawLinePath = 'PC2/HP_line'
 
 
 def get_full_line(baseRoot, imgRoot, saveRoot):

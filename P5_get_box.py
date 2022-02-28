@@ -142,7 +142,7 @@ def get_img_box(imgStart):
 
 
 if __name__ == "__main__":
-    img_path = 'PC/HP_roa_split/0010_2.jpg'
+    img_path = 'PC2/HP_roa_split/0010_2.jpg'
     img = cv.imread(img_path, 0)
     ans_box = get_img_box(img)
     # x = input()
