@@ -159,12 +159,12 @@ def fix_name(text):
     return new_sch_name, new_place
 
 
-def get_maj_range(left, right, up, down, box):
-    left = min(left, box['left'])
-    right = max(right, box['right'])
-    up = min(up, box['up'])
-    down = max(down, box['down'])
-    return left, right, up, down
+def get_range(sch_maj, box):
+    sch_maj['left'] = min(sch_maj['left'], box['left'])
+    sch_maj['right'] = max(sch_maj['right'], box['right'])
+    sch_maj['up'] = min(sch_maj['up'], box['up'])
+    sch_maj['down'] = max(sch_maj['down'], box['down'])
+    return sch_maj
 
 
 def change_batch(batch, text_title):
@@ -174,9 +174,7 @@ def change_batch(batch, text_title):
         batch = '本二'
     if text_title.find('专科') != -1:
         batch = '专科'
-    if text_title.find('深度贫困专项') != -1 or \
-            text_title.find('省级公费师范生') != -1 \
-            or text_title.find('本土人才培养专项') != -1:
+    if text_title.find('深度贫困专项') != -1 or text_title.find('本土人才培养专项') != -1:
         batch = '跳过'
     return batch
 
@@ -254,7 +252,7 @@ def get_message(baseRoot):
     halfMajorList = []
     json_box_name = os.path.join(baseRoot, 'json/box.json')
     json_pageMsg_name = os.path.join(baseRoot, 'json/page_msg.json')
-    start_fg = 0
+    start_fg = conf['is start']
     start_text = conf['start text']
     page_name = '0000.jpg'
     imgNameList = os.listdir(os.path.join(baseRoot, 'HP_roa'))
@@ -264,13 +262,13 @@ def get_message(baseRoot):
     Batch = '本一'  # 本科 本科提前批 本一 本二 专科
     box_id = 0
     global box_data
-    with open(json_box_name, 'r', encoding='UTF-8')as fp:
+    with open(json_box_name, 'r', encoding='UTF-8') as fp:
         box_data = json.load(fp)
     wrong_maj_name = []
     wrong_maj_id = []
     wrong_maj_place = []
     wrong_maj_tuition = []
-    with open(json_pageMsg_name, 'r', encoding='UTF-8')as fp:
+    with open(json_pageMsg_name, 'r', encoding='UTF-8') as fp:
         page_data = json.load(fp)
     while box_id != -1:
         box = box_data[page_name][box_id]
@@ -311,15 +309,14 @@ def get_message(baseRoot):
                 Sch_name = Sch_name + text[4:]
             page_name, box_id = next_box(page_name, box_id)
             # if box_id == -1 or page_name == end_page_name1:
-            if box_id == -1 :
+            if box_id == -1:
                 break
             box = box_data[page_name][box_id]
             while not is_Sch_place(box) and box['text'][0:2] != '地址':
-                School['left'], School['right'], School['up'], School['down'] = get_maj_range \
-                    (School['left'], School['right'], School['up'], School['down'], box)
+                School = get_range(School, box)
                 Sch_name = Sch_name + box['text']
                 page_name, box_id = next_box(page_name, box_id)
-                if box_id == -1 :
+                if box_id == -1:
                     break
                 box = box_data[page_name][box_id]
             # 找到学校结尾了
@@ -337,16 +334,15 @@ def get_message(baseRoot):
             # 以上代码是从学校代码找到'地址'作为学校代码,名字,以及招生人数的结尾
 
             # 以下进入专业的寻找
-            if box_id == -1 :
+            if box_id == -1:
                 break
             page_name, box_id = next_box(page_name, box_id)
-            if box_id == -1 :
+            if box_id == -1:
                 break
             box = box_data[page_name][box_id]
-            School['left'], School['right'], School['up'], School['down'] = get_maj_range \
-                (School['left'], School['right'], School['up'], School['down'], box)
-            # 循环的结束是找到下一个学校或者是找到备注(学校结尾判断)
-            while box['text'][0:2] != '备注' and not is_School(box):
+            School = get_range(School, box)
+            # 循环的结束是找到下一个学校  或者是找到备注(学校结尾判断)  或者找到一个像素框高度大于120
+            while box['text'][0:2] != '备注' and not is_School(box) and box['down'] - box['up'] < 120:
                 # 如果找到一个专业,就循环下去
                 if is_Major(page_name, box_id) or is_half_Major(page_name, box_id):
                     # save_maj_id_box(box, maj_cnt)
@@ -372,13 +368,11 @@ def get_message(baseRoot):
                     Major['id'] = Major['id'].upper()
                     Major['id'] = Major['id'].replace('O', '0')
                     page_name, box_id = next_box(page_name, box_id)
-                    if box_id == -1 :
+                    if box_id == -1:
                         break
                     box = box_data[page_name][box_id]
-                    Major['left'], Major['right'], Major['up'], Major['down'] = get_maj_range \
-                        (Major['left'], Major['right'], Major['up'], Major['down'], box)
-                    School['left'], School['right'], School['up'], School['down'] = get_maj_range \
-                        (School['left'], School['right'], School['up'], School['down'], box)
+                    Major = get_range(Major, box)
+                    School = get_range(School, box)
                     # 判断专业结尾,找出专业学费
                     while (not is_School(box) and not is_Major_tuition(box)) and not is_Sch_remark(page_name,
                                                                                                    box_id) and (
@@ -389,13 +383,11 @@ def get_message(baseRoot):
                             Major_name = Major_name + box['text']
                         # 下一个框框
                         page_name, box_id = next_box(page_name, box_id)
-                        if box_id == -1 :
+                        if box_id == -1:
                             break
                         box = box_data[page_name][box_id]
-                        Major['left'], Major['right'], Major['up'], Major['down'] = \
-                            get_maj_range(Major['left'], Major['right'], Major['up'], Major['down'], box)
-                        School['left'], School['right'], School['up'], School['down'] = get_maj_range \
-                            (School['left'], School['right'], School['up'], School['down'], box)
+                        Major = get_range(Major, box)
+                        School = get_range(School, box)
                     else:
                         # 一个专业结束了,需要判断一下是否有专业招生数,如果没有,可能是框连到一起去了,需要分割出来
                         if is_School(box):
@@ -454,17 +446,16 @@ def get_message(baseRoot):
                             page_name, box_id = last_box(page_name, box_id)
                 # 下一个框框
                 page_name, box_id = next_box(page_name, box_id)
-                if box_id == -1 :
+                if box_id == -1:
                     break
                 box = box_data[page_name][box_id]
                 if 120 < box['down'] - box['up']:
                     print(box['text'])
                     Batch = change_batch(Batch, box['text'])
             else:
-                School['left'], School['right'], School['up'], School['down'] = get_maj_range \
-                    (School['left'], School['right'], School['up'], School['down'], box)
+                School = get_range(School, box)
                 # 一个学校找完了,把信息存了
-                if is_School(box):
+                if is_School(box) or box['down'] - box['up'] >= 120:
                     page_name, box_id = last_box(page_name, box_id)
                 elif box['text'][0:2] != '备注':
                     print('wrong_with:', page_name)
@@ -480,11 +471,11 @@ def get_message(baseRoot):
                       School['page_num'])
                 School_list.append(copy.deepcopy(School))
                 School.clear()
-            if box_id == -1 :
+            if box_id == -1:
                 break
             # print(box['text'])
         page_name, box_id = next_box(page_name, box_id)
-        if box_id == -1 :
+        if box_id == -1:
             break
 
     with open(os.path.join(baseRoot, 'json/School_msg.json'), 'w', encoding='UTF-8') as f:
