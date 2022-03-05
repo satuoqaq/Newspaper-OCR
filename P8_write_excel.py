@@ -7,8 +7,6 @@ from P0_init import conf
 def get_year(name, sch_batch):
     if sch_batch == '专科':
         return 3
-    if name.find('民航运输') != -1:
-        return 3
     if name.find('7+X') != -1 or name.find('本硕连读') != -1:
         return 7
     if name.find('IX') != -1 or name.find('九年') != -1 or name.find('9年') != -1:
@@ -90,7 +88,7 @@ def write_excel(baseRoot):
 
 
 def main():
-    write_excel('PC1')
+    write_excel('PC3')
 
 
 if __name__ == "__main__":
