@@ -32,21 +32,20 @@ def make_dir(dir_list):
             os.mkdir(name)
 
 
-# dirList = [roaImgPath, lineImgPath, roaSplitImgPath, boxImgPath, jsonPath]
-# make_dir(dirList)
+dirList = [roaImgPath, lineImgPath, roaSplitImgPath, boxImgPath, jsonPath]
+make_dir(dirList)
 # botton 1 处理图片得到box
-# get_roa_img(openBaseImgPath, roaImgPath)
-# get_com_line(saveBaseRoot, roaImgPath, roaSplitImgPath)
-# get_full_line(saveBaseRoot, roaImgPath, lineImgPath)
+get_roa_img(openBaseImgPath, roaImgPath)
+get_com_line(saveBaseRoot, roaImgPath, roaSplitImgPath)
+get_full_line(saveBaseRoot, roaImgPath, lineImgPath)
 getBoxAndRecognize(saveBaseRoot, roaImgPath, boxImgPath)
-# botton 2 然后让他们check一下
 all_time = time.time() - t
 print('all_time is:', all_time)
-# get_topbar_data(saveBaseRoot)
-
+# botton 2 得到页码数字然后让他们check一下
+get_topbar_data(saveBaseRoot)
 
 # botton 3  得到学校信息然后纠错
-# get_message(saveBaseRoot)
-# fix_wrong_msg(saveBaseRoot)
+get_message(saveBaseRoot)
+fix_wrong_msg(saveBaseRoot)
 # botton 4 写excel
-# write_excel(saveBaseRoot)
+write_excel(openBaseImgPath, saveBaseRoot)

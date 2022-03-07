@@ -100,9 +100,9 @@ def click_output_dir():
 def click_step1():
     t = time.time()
     PATHS.init()
-    # get_roa_img(PATHS.openBaseImgPath, PATHS.roaImgPath)
-    # get_com_line(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.roaSplitImgPath)
-    # get_full_line(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.lineImgPath)
+    get_roa_img(PATHS.openBaseImgPath, PATHS.roaImgPath)
+    get_com_line(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.roaSplitImgPath)
+    get_full_line(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.lineImgPath)
     getBoxAndRecognize(PATHS.saveBaseRoot, PATHS.roaImgPath, PATHS.boxImgPath)
     print(time.time() - t)
 
@@ -117,7 +117,7 @@ def click_step3():
 
 
 def click_step4():
-    write_excel(PATHS.saveBaseRoot)
+    write_excel(PATHS.openBaseImgPath,PATHS.saveBaseRoot)
 
 
 if __name__ == '__main__':

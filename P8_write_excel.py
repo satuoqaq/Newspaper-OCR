@@ -21,7 +21,7 @@ def get_year(name, sch_batch):
     return 4
 
 
-def write_excel(baseRoot):
+def write_excel(startRoot, baseRoot):
     with open(os.path.join(baseRoot, 'json/School_msg.json'), 'r', encoding='UTF-8') as fp:
         sch_data = json.load(fp)
     with open(os.path.join(baseRoot, 'json/page_msg.json'), 'r', encoding='UTF-8') as fp1:
@@ -30,7 +30,7 @@ def write_excel(baseRoot):
     # pro = ['招生代码', '学校名称', '计划人数', '检测计划人数', '图片页码', '学校备注']
     pro = ['年份', '高考省份', '科类', '录取批次', '招生代码', '学校名称', '计划人数', '检测计划人数', '学校所在页', '图片页码', '学校备注']
     # pro1 = ['招生代码', '学校名称', '专业代码', '专业名称', '计划人数', '学费', '专业备注']
-    pro1 = ['年份', '高考省份', '科类', '录取批次', '招生代码', '学校名称', '专业招生代码', '专业名称', '计划人数', '学制', '学费', '报纸页码数','图片页码数', '专业备注']
+    pro1 = ['年份', '高考省份', '科类', '录取批次', '招生代码', '学校名称', '专业招生代码', '专业名称', '计划人数', '学制', '学费', '报纸页码数', '图片页码数', '专业备注']
     book = xlwt.Workbook()
     sheet = book.add_sheet('Sheet1')
     sheet2 = book.add_sheet('Sheet2')
@@ -42,6 +42,8 @@ def write_excel(baseRoot):
     num = 1
     for i in range(0, len(sch_data)):
         sch = sch_data[i]
+        url = "file:///" + os.path.abspath(os.path.join(startRoot, sch['page_name']))
+        formula = 'HYPERLINK("{}", "{}")'.format(url, sch['page_name'])
         sheet.write(i + 1, 0, conf['Year'])
         sheet.write(i + 1, 1, conf['Province'])
         sheet.write(i + 1, 2, conf['AS'])
@@ -50,7 +52,7 @@ def write_excel(baseRoot):
         sheet.write(i + 1, 5, sch['name'])
         sheet.write(i + 1, 6, int(sch['place']))
         sheet.write(i + 1, 8, sch['page_num'])
-        sheet.write(i + 1, 9, sch['page_name'])
+        sheet.write(i + 1, 9, xlwt.Formula(formula))
         sum_place = 0
         maj_list = sch['Major_list']
         for j in range(0, len(maj_list)):
@@ -67,7 +69,7 @@ def write_excel(baseRoot):
             sheet2.write(num, 9, get_year(maj['name'], sch['batch']))
             sheet2.write(num, 10, maj['tuition'])
             sheet2.write(num, 11, page_data[maj['page_name']]['page_number'])
-            sheet2.write(num, 12, maj['page_name'])
+            sheet2.write(num, 12, xlwt.Formula(formula))
             if maj['place'] != '0' and len(maj['id']) == 2:
                 sheet2.write(num, 13, 'ac')
             elif maj['place'] == '0':
@@ -88,7 +90,7 @@ def write_excel(baseRoot):
 
 
 def main():
-    write_excel('PC3')
+    write_excel('PC3/HP', 'PC3')
 
 
 if __name__ == "__main__":
