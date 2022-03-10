@@ -42,17 +42,24 @@ def write_excel(startRoot, baseRoot):
     num = 1
     for i in range(0, len(sch_data)):
         sch = sch_data[i]
-        url = "file:///" + os.path.abspath(os.path.join(startRoot, sch['page_name']))
-        formula = 'HYPERLINK("{}", "{}")'.format(url, sch['page_name'])
+        url_img = "file:///" + os.path.abspath(os.path.join(startRoot, sch['page_name']))
+        formula_img = 'HYPERLINK("{}", "{}")'.format(url_img, sch['page_name'])
+        sch_pos = 'F' + str(i + 2)
+        maj_pos = 'F' + str(num + 1)
+        url_maj2sch = '[file:///' + os.path.abspath(os.path.join(baseRoot, 'ans.xls')) + ']Sheet1! ' + sch_pos
+        url_sch2maj = '[file:///' + os.path.abspath(os.path.join(baseRoot, 'ans.xls')) + ']Sheet2! ' + maj_pos
+        formula_maj2sch = 'HYPERLINK("{}", "{}")'.format(url_maj2sch, sch['name'])
+        formula_sch2maj = 'HYPERLINK("{}", "{}")'.format(url_sch2maj, sch['name'])
         sheet.write(i + 1, 0, conf['Year'])
         sheet.write(i + 1, 1, conf['Province'])
         sheet.write(i + 1, 2, conf['AS'])
         sheet.write(i + 1, 3, sch['batch'])
         sheet.write(i + 1, 4, sch['id'])
+        # sheet.write(i + 1, 5, xlwt.Formula(formula_sch2maj))
         sheet.write(i + 1, 5, sch['name'])
         sheet.write(i + 1, 6, int(sch['place']))
         sheet.write(i + 1, 8, sch['page_num'])
-        sheet.write(i + 1, 9, xlwt.Formula(formula))
+        sheet.write(i + 1, 9, xlwt.Formula(formula_img))
         sum_place = 0
         maj_list = sch['Major_list']
         for j in range(0, len(maj_list)):
@@ -63,13 +70,14 @@ def write_excel(startRoot, baseRoot):
             sheet2.write(num, 3, sch['batch'])
             sheet2.write(num, 4, sch['id'])
             sheet2.write(num, 5, sch['name'])
+            # sheet2.write(num, 5, xlwt.Formula(formula_maj2sch))
             sheet2.write(num, 6, maj['id'])
             sheet2.write(num, 7, maj['name'])
             sheet2.write(num, 8, int(maj['place']))
             sheet2.write(num, 9, get_year(maj['name'], sch['batch']))
             sheet2.write(num, 10, maj['tuition'])
             sheet2.write(num, 11, page_data[maj['page_name']]['page_number'])
-            sheet2.write(num, 12, xlwt.Formula(formula))
+            sheet2.write(num, 12, xlwt.Formula(formula_img))
             if maj['place'] != '0' and len(maj['id']) == 2:
                 sheet2.write(num, 13, 'ac')
             elif maj['place'] == '0':
