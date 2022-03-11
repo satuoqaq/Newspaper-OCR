@@ -2,6 +2,8 @@ import copy
 import json
 import os
 import re
+import sys
+
 import cv2 as cv
 
 from P0_init import conf
@@ -112,6 +114,15 @@ def is_Major_place(box):
     return False
 
 
+def is_address(box):
+    l_edge = box['l_edge']
+    left = box['left']
+    text = box['text']
+    if l_edge + 100 > left and len(text) >= 2 and text[:2] == '地址':
+        return True
+    return False
+
+
 def is_half_Major(pg_name, bx_id):
     box = box_data[pg_name][bx_id]
     text = box['text']
@@ -119,7 +130,7 @@ def is_half_Major(pg_name, bx_id):
     left = box['left']
     last_pg_name, last_bx_id = last_box(pg_name, bx_id)
     box1 = box_data[last_pg_name][last_bx_id]
-    if len(text) >= 1 and is_char(text[0]) and left < l_edge + 100 and is_Major_tuition(box1):
+    if len(text) >= 1 and is_char(text[0]) and left < l_edge + 100 and (is_Major_tuition(box1) or is_address(box1)):
         return True
     return False
 
@@ -164,17 +175,6 @@ def get_range(sch_maj, box):
     sch_maj['up'] = min(sch_maj['up'], box['up'])
     sch_maj['down'] = max(sch_maj['down'], box['down'])
     return sch_maj
-
-
-def change_batch(text_title):
-    if text_title.find('本科一批') != -1:
-        batch = '本一'
-    if text_title.find('本科二批') != -1:
-        batch = '本二'
-    if text_title.find('专科') != -1:
-        batch = '专科'
-    if text_title.find('深度贫困专项') != -1 or text_title.find('本土人才培养专项') != -1:
-        batch = '跳过'
 
 
 def get_box_img(baseRoot, box_img):
@@ -241,7 +241,7 @@ def maj_id_wrong_change(name):
     return name
 
 
-def check_big_box(page_name, box_id):
+def check_big_box(page_name, box_id, Batch):
     box = box_data[page_name][box_id]
     down_box = box_data[next_box(page_name, box_id)[0]][next_box(page_name, box_id)[1]]
     # 同一行的处理
@@ -251,15 +251,21 @@ def check_big_box(page_name, box_id):
         box['text'] = box['text'] + down_box['text']
     flag_batch = get_class_index(box['text'])
     if flag_batch == 1:
+        Batch[0] = box['text'][2:]
+        Batch[1] = Batch[2] = Batch[3] = ''
         print(box['text'], box['page_name'])
     elif flag_batch == 2:
+        Batch[1] = box['text'][3:]
+        Batch[2] = Batch[3] = ''
         print('    ' + box['text'], box['page_name'])
     elif flag_batch == 3:
+        Batch[2] = box['text'][2:]
+        Batch[3] = ''
         print('        ' + box['text'], box['page_name'])
     elif flag_batch == 4:
+        Batch[3] = box['text'][3:]
         print('            ' + box['text'], box['page_name'])
-    if flag_batch:
-        change_batch(box['text'])
+    return Batch
 
 
 def get_class_index(text):
@@ -303,8 +309,7 @@ def get_message(baseRoot):
     end_page_name = str(len(imgNameList)).zfill(4) + '.jpg'
     end_text = conf['end text']
     AS = conf['AS']  # 文理科(arts or science)
-    Batch = '本一'  # 本科 本科提前批 本一 本二 专科
-
+    Batch = ['艺术类', '', '', '']  # 本科 本科提前批 本一 本二 专科
     global box_data
     with open(json_box_name, 'r', encoding='UTF-8') as fp:
         box_data = json.load(fp)
@@ -320,6 +325,7 @@ def get_message(baseRoot):
         if start_fg == 0:
             if box['text'] == start_text:
                 start_fg = 1
+                page_name, box_id = last_box(page_name, box_id)
             else:
                 page_name, box_id = next_box(page_name, box_id)
                 continue
@@ -333,7 +339,7 @@ def get_message(baseRoot):
 
         # 判断可能出现的批次更新信息
         if is_class_box(page_name, box_id):
-            check_big_box(page_name, box_id)
+            Batch = check_big_box(page_name, box_id, Batch)
 
         # 开始寻找学校
         if is_School(box) and Batch != '跳过':
@@ -500,17 +506,17 @@ def get_message(baseRoot):
                     page_name, box_id = last_box(page_name, box_id)
                 elif box['text'][0:2] != '备注':
                     pass
-                    # print('wrong_with:', page_name)
-                    # print(box)
-                    # sys.exit()
+                    print('wrong_with:', page_name)
+                    print(box)
+                    sys.exit()
                 School['Major_list'] = copy.deepcopy(Major_list)
                 if Sch_sum_place_check == Sch_sum_place:
                     School['maj_num_check'] = 1
                 else:
                     School['maj_num_check'] = 0
                 Major_list.clear()
-                # print(School['page_name'], School['id'], School['name'], School['as'], School['batch'],
-                #       School['page_num'])
+                print(School['page_name'], School['id'], School['name'], School['batch'],
+                      School['page_num'])
                 School_list.append(copy.deepcopy(School))
                 School.clear()
             if box_id == -1:
