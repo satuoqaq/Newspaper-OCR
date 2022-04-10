@@ -9,7 +9,6 @@ import os
 from tqdm import tqdm
 import re
 
-
 TopBarHeight = 185
 TopTitleHeight = 1290
 BottomBarHeight = 125
@@ -207,7 +206,7 @@ def get_right_split_line(binary_img, kernel):
 
 
 def main():
-    get_com_line('PC2/HP_roa', 'PC2/HP_roa_split')
+    get_com_line('PC_art_all', 'PC_art_all/HP_roa', 'PC_art_all/HP_roa_split')
 
 
 if __name__ == "__main__":

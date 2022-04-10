@@ -193,7 +193,7 @@ def getBoxAndRecognize(baseRoot, imgRoot, img_save_path):
 
 def main():
     pass
-    # getBoxAndRecognize(openRoaImgPath, saveImgPath, saveJsonPath)
+    getBoxAndRecognize('PC_all', 'PC_all/HP', 'PC_all')
 
 
 if __name__ == "__main__":

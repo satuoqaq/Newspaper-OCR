@@ -111,7 +111,7 @@ def fix_wrong_msg(baseRoot):
 
 
 def main():
-    fix_wrong_msg('PC2')
+    fix_wrong_msg('PC3')
 
 
 if __name__ == '__main__':

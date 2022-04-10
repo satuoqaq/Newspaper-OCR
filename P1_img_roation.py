@@ -4,12 +4,13 @@ import cv2 as cv
 import numpy as np
 import os
 
-
 # *所有参数*
 
 # 图片路径
 # initialImgRoot = 'PC2/HP/'
 # ImgRoaRoot = 'PC2/HP_roa/'
+
+need_change_position = -400
 
 
 def imgSort_and_Rename(imgRoot):
@@ -52,8 +53,28 @@ def get_roa_img(imgRoot, saveRoot):
         name = str(i).zfill(4) + '.jpg'
         print(name)
         imgPath = os.path.join(imgRoot, name)
-        # 取出图片并二值化
+        # 取出图片并灰度化
         imgStart = cv.imread(imgPath, 0)
+
+        # 平移图片到左上角
+        kernel = np.ones((3, 3), np.uint8)
+        _, img_bin = cv.threshold(imgStart, 240, 255, cv.THRESH_BINARY)
+        img_erode = cv.erode(img_bin, kernel, iterations=1)
+        img_erode = ~img_erode
+        x_pos = 0
+        for j in range(0, img_erode.shape[0]):
+            if img_erode[5000][j] == 255:
+                x_pos = j
+                break
+        y_pos = 0
+        for j in range(0, img_erode.shape[1]):
+            if img_erode[j][4000] == 255:
+                y_pos = j
+                break
+        mat_translation = np.float32([[1, 0, -x_pos + 30], [0, 1, -y_pos + 30]])
+        imgStart = cv.warpAffine(imgStart, mat_translation, (img_erode.shape[1], img_erode.shape[0]),
+                                 borderValue=(255, 255, 255))
+
         # 截取顶栏位置寻找直线
         img = imgStart[50:2000, 30:imgStart.shape[1]]
         angleRoa = 0
@@ -100,6 +121,7 @@ def get_roa_img(imgRoot, saveRoot):
         # 旋转原始图片
         matRoa = cv.getRotationMatrix2D((0, 0), angleRoa, 1)
         imgRoa = cv.warpAffine(imgStart, matRoa, (imgStart.shape[1], imgStart.shape[0]), borderValue=255)
+
         cv.imwrite(os.path.join(saveRoot, name), imgRoa)
         print('步骤一:图片旋转完成！')
 

@@ -252,19 +252,23 @@ def check_big_box(page_name, box_id, Batch):
     flag_batch = get_class_index(box['text'])
     if flag_batch == 1:
         Batch[0] = box['text'][2:]
-        Batch[1] = Batch[2] = Batch[3] = ''
+        Batch[1] = Batch[2] = Batch[3] = Batch[4] = ''
         print(box['text'], box['page_name'])
     elif flag_batch == 2:
         Batch[1] = box['text'][3:]
-        Batch[2] = Batch[3] = ''
+        Batch[2] = Batch[3] = Batch[4] = ''
         print('    ' + box['text'], box['page_name'])
     elif flag_batch == 3:
         Batch[2] = box['text'][2:]
-        Batch[3] = ''
+        Batch[3] = Batch[4] = ''
         print('        ' + box['text'], box['page_name'])
     elif flag_batch == 4:
         Batch[3] = box['text'][3:]
+        Batch[4] = ''
         print('            ' + box['text'], box['page_name'])
+    elif flag_batch == 5:
+        Batch[4] = box['text'][1:]
+        print('                ' + box['text'], box['page_name'])
     return Batch
 
 
@@ -277,6 +281,8 @@ def get_class_index(text):
         return 3
     if len(text) >= 3 and re.match(r'[(|（]\d{1}[）|)]', text[:3]):
         return 4
+    if len(text) >= 1 and re.match(r'[①|②|③|④|⑤]', text[:1]):
+        return 5
     return 0
 
 
@@ -285,6 +291,8 @@ def is_class_box(page_name, box_id):
     if box['down'] - box['up'] < class_threshold:
         return False
     pre_box_name, pre_box_id = last_box(page_name, box_id)
+    if page_name == '0000.jpg' and box_id == 0:
+        return True
     pre_box = box_data[pre_box_name][pre_box_id]
     if box['up'] - pre_box['down'] > bigBox_distance_last:
         return True
@@ -309,7 +317,7 @@ def get_message(baseRoot):
     end_page_name = str(len(imgNameList)).zfill(4) + '.jpg'
     end_text = conf['end text']
     AS = conf['AS']  # 文理科(arts or science)
-    Batch = ['艺术类', '', '', '']  # 本科 本科提前批 本一 本二 专科
+    Batch = ['', '', '', '', '']  # 本科 本科提前批 本一 本二 专科
     global box_data
     with open(json_box_name, 'r', encoding='UTF-8') as fp:
         box_data = json.load(fp)
@@ -542,8 +550,7 @@ def get_message(baseRoot):
 
 
 def main():
-    pass
-    get_message('PC3')
+    get_message('PC_all')
 
 
 if __name__ == '__main__':

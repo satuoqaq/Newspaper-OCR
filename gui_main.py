@@ -117,7 +117,7 @@ def click_step3():
 
 
 def click_step4():
-    write_excel(PATHS.openBaseImgPath,PATHS.saveBaseRoot)
+    write_excel(PATHS.openBaseImgPath, PATHS.saveBaseRoot)
 
 
 if __name__ == '__main__':
