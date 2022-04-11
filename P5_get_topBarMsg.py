@@ -1,6 +1,7 @@
 """
     检查topBar中信息
 """
+import copy
 import os
 
 import cv2
@@ -36,7 +37,6 @@ def page_enhance(xin):
         img_c = xin.shape[2]
     except IndexError:
         img_c = 1
-    # print(img_h, img_w, img_c)
     r = int(math.sqrt(float(img_w * img_h)) / 32.0) + 1
     fin = cv2.GaussianBlur(xin, (r + r + 1, r + r + 1), 0.0)
 
@@ -63,6 +63,7 @@ cls_model_dir = 'PaddleOCR/model/210924_ch_ppocr_server_v2.0_infer/cls'
 use_gpu = conf['use gpu']
 
 ocr_model = init_rec_model(use_gpu, rec_model_dir, rec_char_dict_path, det_model_dir, cls_model_dir)
+kernel = np.ones((3, 3), np.uint8)
 
 
 def get_topbar_data(baseRoot, specific_pages=None):
@@ -260,37 +261,38 @@ def get_default_pagenumber(page_number_img):
     :param page_number_img: 粗略裁剪的页码位置图片
     :return: 页码数字
     """
-    page_number_img = page_enhance(page_number_img[:-20, :])
-    ret, page_number_img = cv2.threshold(page_number_img, 200, 255, cv2.THRESH_BINARY)
-    page_number_img = cv2.erode(page_number_img, np.ones((5, 5), np.uint8))
-    page_number_img = cv2.medianBlur(page_number_img, 3)
+    # page_number_img = page_enhance(page_number_img[:-20, :])
+    ret, page_number_img = cv2.threshold(page_number_img[:-20, :], 195, 255, cv2.THRESH_BINARY)
+    # page_number_img = cv2.erode(page_number_img, np.ones((5, 5), np.uint8))
+    # page_number_img = cv2.medianBlur(page_number_img, 3)
     page_number_h, page_number_w = page_number_img.shape[:2]
     rows_sum = np.sum(page_number_img, axis=0)
-    rows_sum = list(map(lambda x: x / 255, rows_sum))
+    rows_sum = list(map(lambda x: int(x / 255), rows_sum))
     # 分别从前向后和从后向前找连续0的开始,即页码框部分 （0-黑 1-白）
     flag_front, flag_behind = 0, 0
     start_idx, end_idx = 0, 0
     for idx in range(page_number_w):
         flag_front = flag_front + 1 if rows_sum[idx] == 0 and not start_idx else 0
         flag_behind = flag_behind + 1 if rows_sum[-idx] == 0 and not end_idx else 0
-        if flag_front >= 2:
+        if flag_front >= 5 and start_idx == 0:
             start_idx = idx
-        if flag_behind >= 2:
+        if flag_behind >= 5 and end_idx == 0:
             end_idx = idx
         if start_idx and end_idx:
             break
-    page_number_img = page_number_img[:, start_idx:page_number_w - end_idx]
-    page_number_img = cv2.dilate(page_number_img, np.ones((3, 3), np.uint8))
-    # plt.imshow(page_number_img)
-    # plt.axis('off')
-    # plt.show()
-    ocr_results = ocr_model.ocr(page_number_img, det=True, cls=False)
-    ocr_results = sorted(ocr_results, key=lambda x: x[-1], reverse=True)  # 按置信度降序排列
+    page_number_img = page_number_img[:, start_idx:page_number_w - end_idx - 5]
+    page_number_img = ~page_number_img
+    page_number_img = cv2.erode(page_number_img, kernel=kernel, iterations=1)
+    page_number_img = cv2.medianBlur(page_number_img, 3)
+    plt.imshow(page_number_img, cmap=plt.get_cmap('gray'))
+    plt.axis('off')
+    plt.show()
+    ocr_results = ocr_model.ocr(page_number_img, det=False, cls=False)
     try:
-        result = eval(ocr_results[0][1][0])
+        result = eval(ocr_results[0][0])
     except IndexError:
         result = -1
-
+    # print(result)
     # cv2.imshow('pagenumber', page_number_img)
     return result
 
@@ -352,7 +354,7 @@ def get_title_topbar_data(ori_img):
 
 def main():
     # get_topbar_data('PC2/HP_upper/', list(range(0, 2)))
-    get_topbar_data('PC2/HP_roa_split/uppers/')
+    get_topbar_data("PC_art_all")
 
 
 if __name__ == "__main__":
